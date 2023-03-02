@@ -103,7 +103,7 @@ public class FlightController {
         ObjectMapper mapper = new ObjectMapper();
         Flight flight = mapper.readValue(ctx.body(), Flight.class);
         int flight_id = Integer.parseInt(ctx.pathParam("flight_id"));
-        Flight updatedFlight = flightService.updateFlight(flight_id, flight);
+        Object updatedFlight = flightService.updateFlight(flight_id, flight);
         System.out.println(updatedFlight);
         if(updatedFlight == null){
             ctx.status(400);

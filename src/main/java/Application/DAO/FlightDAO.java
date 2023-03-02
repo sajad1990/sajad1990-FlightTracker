@@ -33,7 +33,7 @@ public class FlightDAO {
         List<Flight> flights = new ArrayList<>();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = "SELECT * FROM Flight";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
@@ -60,18 +60,17 @@ public class FlightDAO {
      * from zero) and the second argument identifies the value to be used:
      * preparedStatement.setInt(1,int1);
      *
-     * @param id a flight ID.
+     * @param flight_id a flight ID.
      */
-    public Flight getFlightById(int id){
+    public Flight getFlightById(int flight_id){
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = "SELECT flight_id, departure_city, arrival_city FROM flight WHERE flight_id = ?";
             
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-
             //write preparedStatement's setString and setInt methods here.
-
+            preparedStatement.setInt(1,flight_id);
             ResultSet rs = preparedStatement.executeQuery();
             while(rs.next()){
                 Flight flight = new Flight(rs.getInt("flight_id"), rs.getString("departure_city"),
@@ -108,11 +107,13 @@ public class FlightDAO {
         try {
             //Write SQL logic here. When inserting, you only need to define the departure_city and arrival_city
             //values (two columns total!)
-            String sql = "change me" ;
+            String sql = "INSERT INTO flight (departure_city, arrival_city) VALUES (?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             //write preparedStatement's setString and setInt methods here.
-
+            preparedStatement.setString(1, flight.getDeparture_city());
+            preparedStatement.setString(2, flight.getArrival_city());
+    
 
             preparedStatement.executeUpdate();
             ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
@@ -142,21 +143,25 @@ public class FlightDAO {
      *
      * @param id a flight ID.
      * @param flight a flight object. the flight object does not contain a flight ID.
+     * @return 
      */
-    public void updateFlight(int id, Flight flight){
+    public boolean updateFlight(int id, Flight flight){
         Connection connection = ConnectionUtil.getConnection();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql =  "UPDATE flight SET departure_city=?, arrival_city=? WHERE flight_id=?;";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             //write PreparedStatement setString and setInt methods here.
-
+            preparedStatement.setString(1, flight.getDeparture_city());
+            preparedStatement.setString(2, flight.getArrival_city());
+            preparedStatement.setInt(3,id);
 
             preparedStatement.executeUpdate();
         }catch(SQLException e){
             System.out.println(e.getMessage());
         }
+        return false;
     }
 
     /**
@@ -181,8 +186,10 @@ public class FlightDAO {
         List<Flight> flights = new ArrayList<>();
         try {
             //Write SQL logic here
-            String sql = "change me";
+            String sql = "SELECT * FROM flight WHERE departure_city = ? AND arrival_city = ? ";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, departure_city);
+            preparedStatement.setString(2, arrival_city);
 
             //write PreparedStatement setString and setInt methods here.
 
@@ -197,5 +204,9 @@ public class FlightDAO {
             System.out.println(e.getMessage());
         }
         return flights;
+    }
+
+    public boolean updateFlight(Flight flight) {
+        return false;
     }
 }
